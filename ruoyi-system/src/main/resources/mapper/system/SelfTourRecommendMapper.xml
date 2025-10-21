@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SelfTourRecommendMapper">
+    
+    <resultMap type="com.ruoyi.system.domain.SelfTourRecommend" id="SelfTourRecommendResult">
+        <result property="id"    column="id"    />
+        <result property="spotName"    column="spot_name"    />
+        <result property="spotDescription"    column="spot_description"    />
+        <result property="spotLocation"    column="spot_location"    />
+        <result property="recommendIndex"    column="recommend_index"    />
+        <result property="spotType"    column="spot_type"    />
+        <result property="suitableCrowd"    column="suitable_crowd"    />
+        <result property="bestVisitTime"    column="best_visit_time"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSelfTourRecommendVo">
+        select id, spot_name, spot_description, spot_location, recommend_index, spot_type, suitable_crowd, best_visit_time, image_url, status, create_by, create_time, update_by, update_time, remark from self_tour_recommend
+    </sql>
+
+    <select id="selectSelfTourRecommendList" parameterType="com.ruoyi.system.domain.SelfTourRecommend" resultMap="SelfTourRecommendResult">
+        <include refid="selectSelfTourRecommendVo"/>
+        <where>  
+            <if test="spotName != null  and spotName != ''"> and spot_name like concat('%', #{spotName}, '%')</if>
+            <if test="spotDescription != null  and spotDescription != ''"> and spot_description like concat('%', #{spotDescription}, '%')</if>
+            <if test="spotLocation != null  and spotLocation != ''"> and spot_location like concat('%', #{spotLocation}, '%')</if>
+            <if test="recommendIndex != null "> and recommend_index = #{recommendIndex}</if>
+            <if test="spotType != null  and spotType != ''"> and spot_type = #{spotType}</if>
+            <if test="suitableCrowd != null  and suitableCrowd != ''"> and suitable_crowd like concat('%', #{suitableCrowd}, '%')</if>
+            <if test="bestVisitTime != null  and bestVisitTime != ''"> and best_visit_time = #{bestVisitTime}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by recommend_index desc
+    </select>
+    
+    <select id="selectSelfTourRecommendById" parameterType="Long" resultMap="SelfTourRecommendResult">
+        <include refid="selectSelfTourRecommendVo"/>
+        where id = #{id}
+    </select>
+    
+    <select id="selectRecommendByPreference" resultMap="SelfTourRecommendResult">
+        <include refid="selectSelfTourRecommendVo"/>
+        <where>
+            <if test="spotType != null and spotType != ''">
+                and spot_type = #{spotType}
+            </if>
+            <if test="suitableCrowd != null and suitableCrowd != ''">
+                and suitable_crowd like concat('%', #{suitableCrowd}, '%')
+            </if>
+            and status = '0'
+        </where>
+        order by recommend_index desc
+        limit 10
+    </select>
+        
+    <insert id="insertSelfTourRecommend" parameterType="com.ruoyi.system.domain.SelfTourRecommend" useGeneratedKeys="true" keyProperty="id">
+        insert into self_tour_recommend
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="spotName != null">spot_name,</if>
+            <if test="spotDescription != null">spot_description,</if>
+            <if test="spotLocation != null">spot_location,</if>
+            <if test="recommendIndex != null">recommend_index,</if>
+            <if test="spotType != null">spot_type,</if>
+            <if test="suitableCrowd != null">suitable_crowd,</if>
+            <if test="bestVisitTime != null">best_visit_time,</if>
+            <if test="imageUrl != null">image_url,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="spotName != null">#{spotName},</if>
+            <if test="spotDescription != null">#{spotDescription},</if>
+            <if test="spotLocation != null">#{spotLocation},</if>
+            <if test="recommendIndex != null">#{recommendIndex},</if>
+            <if test="spotType != null">#{spotType},</if>
+            <if test="suitableCrowd != null">#{suitableCrowd},</if>
+            <if test="bestVisitTime != null">#{bestVisitTime},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSelfTourRecommend" parameterType="com.ruoyi.system.domain.SelfTourRecommend">
+        update self_tour_recommend
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="spotName != null">spot_name = #{spotName},</if>
+            <if test="spotDescription != null">spot_description = #{spotDescription},</if>
+            <if test="spotLocation != null">spot_location = #{spotLocation},</if>
+            <if test="recommendIndex != null">recommend_index = #{recommendIndex},</if>
+            <if test="spotType != null">spot_type = #{spotType},</if>
+            <if test="suitableCrowd != null">suitable_crowd = #{suitableCrowd},</if>
+            <if test="bestVisitTime != null">best_visit_time = #{bestVisitTime},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSelfTourRecommendById" parameterType="Long">
+        delete from self_tour_recommend where id = #{id}
+    </delete>
+
+    <delete id="deleteSelfTourRecommendByIds" parameterType="String">
+        delete from self_tour_recommend where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
