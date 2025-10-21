@@ -1,0 +1,11 @@
+# AI API配置（阿里云百炼）
+ai:
+  type: aliyun
+  aliyun:
+    api-key: sk-dee92e2a3c2b4ce8a9e49af02919da72 # API密钥
+    endpoint: https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation
+    model: qwen-turbo
+    app-name: 旅游小助手 # 应用名称
+    max-tokens: 1500 # 最大生成长度
+    temperature: 0.7 # 生成的随机性
+    top-p: 0.8 # 生成的多样性

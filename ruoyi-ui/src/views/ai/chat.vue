@@ -70,6 +70,7 @@
 
 <script>
 import { parseTime } from '@/utils/ruoyi'
+import { sendAiQuestion, getAiChatHistory } from '@/api/ai/chat'
 
 export default {
   name: 'Chat',
@@ -79,7 +80,8 @@ export default {
       inputContent: '',
       userAvatar: require('@/assets/images/user.png'),
       aiAvatar: require('@/assets/images/ai.png'),
-      loading: false
+      loading: false,
+      userId: undefined // 添加用户ID字段
     }
   },
   methods: {
@@ -98,17 +100,19 @@ export default {
 
       this.loading = true
       try {
-        // 模拟AI回复，实际项目替换为真实接口
-        setTimeout(() => {
+        const response = await sendAiQuestion(content)
+        if (response.code === 200) {
           this.messages.push({
             isUser: false,
-            content: `已收到您的问题："${content}"，这是模拟的AI回复。`,
+            content: response.data,
             timestamp: new Date()
           })
-          this.scrollToBottom()
-        }, 1000)
+        } else {
+          throw new Error(response.msg)
+        }
+        this.scrollToBottom()
       } catch (error) {
-        this.$message.error('请求失败，请重试')
+        this.$message.error(error.message || '请求失败，请重试')
       } finally {
         this.loading = false
       }
@@ -127,9 +131,24 @@ export default {
         const container = this.$refs.messageContainer
         container.scrollTop = container.scrollHeight
       })
+    },
+    async loadHistory() {
+      try {
+        const res = await getAiChatHistory()
+        if (res.code === 200) {
+          this.messages = res.data.map(item => ({
+            isUser: item.userId === this.userId,
+            content: item.isUser ? item.userInput : item.aiResponse,
+            timestamp: new Date(item.createTime)
+          }))
+        }
+      } catch (error) {
+        console.error('加载历史记录失败:', error)
+      }
     }
   },
-  mounted() {
+  async mounted() {
+    await this.loadHistory()
     this.scrollToBottom()
   }
 }
